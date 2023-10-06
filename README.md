@@ -9,7 +9,7 @@
 
 #### Simple Tags
 
-* Debian 12 (Book Worm): 
+* Debian 12 (Book Worm):
     - 3.12.0-bookworm, 3.12-bookworm
     - 3.11.6-bookworm, 3.11-bookworm
     - 3.10.13-bookworm, 3.10-bookworm
@@ -35,8 +35,7 @@
 * 2.7.18¹, 2.7¹: 2.7.18-bookworm¹
 
 
-> ¹ Python 2.7 is EOL. We built it only to support legacy projects migrating
-to newer versions. Please, be carefull when using this image - it's unsecure.
+> ¹ Python 2.7 is EOL. We built it only to support legacy projects migrating to newer versions. Please, be carefull when using this image - it's unsecure.
 
 ### Supported architetures
 
@@ -47,24 +46,22 @@ to newer versions. Please, be carefull when using this image - it's unsecure.
 
 ## What is Python
 
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/115px-Python-logo-notext.svg.png)
+
 Python is an interpreted, interactive, object-oriented, open-source programming
 language. It incorporates modules, exceptions, dynamic typing, very high level
-dynamic data types, and classes. Python combines remarkable power with very 
+dynamic data types, and classes. Python combines remarkable power with very
 clear syntax. It has interfaces to many system calls and libraries, as well as
 to various window systems, and is extensible in C or C++. It is also usable as
 an extension language for applications that need a programmable interface.
 Finally, Python is portable: it runs on many Unix variants, on the Mac, and on
-Windows 2000 and later.
+Windows 2000 and later.²
 
-> source: [wikipedia.org/wiki/Python_(programming_language)](
-    https://wikipedia.org/wiki/Python_(programming_language
-)
-
-![](https://raw.githubusercontent.com/docker-library/docs/01c12653951b2fe592c1f93a13b4e289ada0e3a1/python/logo.png)
+> ² See more: [wikipedia.org/wiki/Python_(programming_language)](https://wikipedia.org/wiki/Python_(programming_language)
 
 ## Why to use this image
 
-The official docker images for Python are great, but they are bloated. 
+The official docker images for Python are great, but they are bloated.
 Therefore, we have simplified the Dockerfile and the process of building these
 images so that we can build an image for any version of Python on any supported
 distribution without any sacrifice in source code handling and/or without any or
@@ -102,8 +99,8 @@ $ docker run --rm -it -name my-app my-app
 
 ### Run a single Python script
 
-To run a simple script or a single-file project, there is no need to write a 
-full Dockerfile. In such cases, you can run a Python script using the Python 
+To run a simple script or a single-file project, there is no need to write a
+full Dockerfile. In such cases, you can run a Python script using the Python
 Docker image directly:
 
 ```bash
@@ -122,14 +119,14 @@ probably use it. It is designed to be used both as a disposable container
 (assemble your source code and launch the container to launch your application)
 as well as a base for building other images.
 
-Some of these tags may have names like bookworm or jammy. These are the 
-codenames of the sets for versions (of GNU/Linux distributions) of Debian or 
-Ubuntu and indicate which OS version the image was based on. If your image 
+Some of these tags may have names like bookworm or jammy. These are the
+codenames of the sets for versions (of GNU/Linux distributions) of Debian or
+Ubuntu and indicate which OS version the image was based on. If your image
 needs to install any additional packages beyond those that come with the image,
 you will probably want to specify one of these explicitly to minimize breakages
 when there are new releases of the distribution.
 
-This image does not contain the common packages contained in the default tag 
+This image does not contain the common packages contained in the default tag
 and _only_ contains the minimum packages required to run python. It was built
 only with GNU/Linux bases, as this is the focus of Infra7's development. It
 aims to be a basis for developing Docker images suitable for your application.
