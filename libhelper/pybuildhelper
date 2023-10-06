@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+export PYTHON_VERSION
+export PYTHON_PIP_VERSION
+export PYTHON_SETUPTOOLS_VERSION
+export PYTHON_GET_PIP_URL
+export PYTHON_GET_PIP_SHA256
+export PYTHON_EXTRA_BUILD_OPTS
+
+# - function: public __get_source [$1]
+#       description: downloads Python source files
+#       parameters: 
+#           $1 -> Python version
+#       returns: none
+#   ----------------------------------------------------------------------------
+function __get_source() {
+    DLBASEURL="https://python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}" \
+    KEYSERVER="keyserver.ubuntu.com"
+    SOURCE="Python-${1-${PYTHON_VERSION}}.tar.xz"
+
+    printf $"Downloading source for Python=%s...\n\n" ${PYTHON_VERSION}
+    wget --show-progress -qO "${SOURCE}" "${DLBASEURL}/${SOURCE}"
+    wget --show-progress -qO "${SOURCE}.asc" "${DLBASEURL}/${SOURCE}.asc"
+    echo
+
+    PYTHON_GPG_KEY=$(gpg --dry-run \
+        --verify "${SOURCE}.asc" "${SOURCE}" 2>&1 \
+            | sed '3q;d' \
+            | awk '{print $NF}'
+    )
+
+    printf $"Retrieving GPG key from %s [fingerprint=%s]\n" \
+        "${KEYSERVER}" "${PYTHON_GPG_KEY}"
+    export GNUPGHOME="$(mktemp -d)"
+    gpg --batch --quiet \
+        --keyserver "hkps://${KEYSERVER}" \
+        --recv-keys "${PYTHON_GPG_KEY}" 2>/dev/null
+
+    printf $"Verifing PGP signature on file [%s]\n\n" "${SOURCE}"
+    gpg --batch --quiet \
+        --verify "${SOURCE}.asc" "${SOURCE}" || \
+        rm -f "${SOURCE}"
+    echo
+
+    [ -s "${SOURCE}" ] && mv -f "${SOURCE}" "${SOURCE,,}"
+    rm -rf "${GNUPGHOME}" "${SOURCE}.asc"
+    gpgconf --kill all
+    unset GNUPGHOME
+}
+
+# - function: public __configure
+#       description: unpacks and prepares the source for building
+#       returns: none
+#   ----------------------------------------------------------------------------
+function __configure() {
+
+    # method ___configure: runs ./configure on source code
+    ___configure() {
+        cd /usr/src/python
+        gnuArch="$(gcc -dumpmachine)"
+        ./configure "${@}"
+    }
+
+    mkdir -p /usr/src/python
+    tar \
+        --extract \
+        --directory /usr/src/python \
+        --strip-components=1 \
+        --file "python-${PYTHON_VERSION}.tar.xz" && \
+    rm -f "python-${PYTHON_VERSION}.tar.xz"
+
+    ___configure "${@}"
+}
+
+# - function: public __make
+#       description: unpacks and prepares the source for building
+#       returns: none
+#   ----------------------------------------------------------------------------
+function __make() {
+    make -j "$(nproc)" \
+    "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
+    "LDFLAGS=${LDFLAGS:-}" \
+    "PROFILE_TASK=${PROFILE_TASK:-}" \
+
+    # https://github.com/docker-library/python/issues/784
+    # prevent accidental usage of a system installed libpython of the same version
+    rm -f python
+
+    make -j "$(nproc)" \
+    "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
+    "LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
+    "PROFILE_TASK=${PROFILE_TASK:-}" \
+    python
+}
+
+# - function: public __make_install
+#       description: installs the build binaries to the system
+#       returns:
+#           1 -> execution test failed
+#           2 -> can't install one of core modules
+#   ----------------------------------------------------------------------------
+function __make_install() {
+    # method: ___install_core_modules: Installs the core modules
+    ___install_core_modules() {
+        set -eux
+        wget --show-progress -qO get-pip.py "${PYTHON_GET_PIP_URL}"
+        (echo "${PYTHON_GET_PIP_SHA256} *get-pip.py" | sha256sum -c -) \
+            || return 2
+
+        export PYTHONDONTWRITEBYTECODE=1
+        PYMAJOR="${PYTHON_VERSION//.*/}"
+        python${PYMAJOR} get-pip.py \
+            --disable-pip-version-check \
+            --no-cache-dir \
+            --no-compile \
+            "pip==${PYTHON_PIP_VERSION}" \
+            "setuptools==${PYTHON_SETUPTOOLS_VERSION}"
+        #___test pip "${PIP_VERSION}"
+        rm -f get-pip.py
+
+    }
+
+    # method ___cleanup: Cleanup unwanted files
+    ___cleanup() {
+        find ${PREFIX} -depth -type d \
+            -a \( -name 'test'  -o -name 'tests' -o -name 'idle_test' \) \
+            -exec rm -rf '{}' +
+
+        find ${PREFIX} -depth -type f \
+            -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \
+            -exec rm -rf '{}' +
+
+        rm -rf /usr/src/python
+    }
+
+    # method ___test: tests if python is build correctly
+    ___test() {
+        [ "$(${1-} --version)" == "${2}" ] || return 1
+    }
+
+    make install
+    ldconfig
+
+    # make some useful symlinks that are expected to exists
+    # ("${PREFIX}/bin/python" and friends)
+    PYMAJOR="${PYTHON_VERSION//.*/}"
+    for src in \
+            idle${PYMAJOR} pydoc${PYMAJOR} \
+            python${PYMAJOR} python${PYMAJOR}-config; do
+        dst="$(echo "$src" | tr -d ${PYMAJOR})";
+        if [ -s "${PREFIX}/bin/$src" ] && [ ! -e "${PREFIX}/bin/$dst" ]; then
+            ln -svT "$src" "${PREFIX}/bin/$dst"
+        fi
+    done
+
+    #___test python "${PYTHON_VERSION}"
+
+    ___install_core_modules
+
+    ___cleanup
+}
+
+# vim: ts=4:sw=4:sts=4:et
