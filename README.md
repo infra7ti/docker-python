@@ -57,7 +57,7 @@ an extension language for applications that need a programmable interface.
 Finally, Python is portable: it runs on many Unix variants, on the Mac, and on
 Windows 2000 and later.²
 
-> ² See more: [wikipedia.org/wiki/Python_(programming_language)](https://wikipedia.org/wiki/Python_(programming_language)
+> ² See more: [wikipedia.org/wiki/Python_(programming_language)](https://wikipedia.org/wiki/Python_(programming_language))
 
 ## Why to use this image
 
