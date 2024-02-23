@@ -9,8 +9,5 @@ services:
         TARGET_OS: ${TARGET_OS}
       context: ${PWD}
       dockerfile: targets/${TARGET_OS}/Dockerfile
-      tags:
-        - infra7/python:${PYTHON_SERIES}-${TARGET_OS}
-        - infra7/python:${PYTHON_VERSION}-${TARGET_OS}
-    image: infra7/python:${PYTHON_VERSION}-${TARGET_OS}
+    image: python:${PYTHON_VERSION}-${TARGET_OS}
     network_mode: host
