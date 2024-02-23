@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+PYTHON_VERSION=3.11.8
+
+PYTHON_PIP_VERSION=23.3.2
+PYTHON_SETUPTOOLS_VERSION=69.0.3
+PYTHON_GET_PIP_URL=https://bootstrap.pypa.io/pip/get-pip.py
+PYTHON_GET_PIP_SHA256=7cfd4bdc4d475ea971f1c0710a5953bcc704d171f83c797b9529d9974502fcc6
+
+# Prefix where to install python
+PREFIX=/usr/local
+
+# Machine architecture
+#gnuArch="$(gcc -dumpmachine)"
+
+# Runtime requirements
+REQUIRES=" \
+    ca-certificates \
+    netbase \
+    tzdata \
+    wget \
+    xz-utils \
+"
+
+# Build requirements
+BUILD_REQUIRES=" \
+    dpkg-dev \
+    gcc \
+    gnupg \
+    libbluetooth-dev \
+    libbz2-dev \
+    libc6-dev \
+    libdb-dev \
+    libexpat1-dev \
+    libffi-dev \
+    libgdbm-dev \
+    liblzma-dev \
+    libncursesw5-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    make \
+    tk-dev \
+    uuid-dev \
+    zlib1g-dev \
+"
+
+PYTHON_EXTRA_BUILD_OPTS=""
+
+# vim: ts=4:sw=4:sts=4:et

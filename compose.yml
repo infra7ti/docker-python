@@ -6,17 +6,11 @@ services:
     build:
       args:
         PYTHON_SERIES: ${PYTHON_SERIES}
-        PYTHON_VERSION: ${PYTHON_VERSION}
         TARGET_OS: ${TARGET_OS}
       context: ${PWD}
-      dockerfile: ${TARGET_OS}/Dockerfile
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
+      dockerfile: targets/${TARGET_OS}/Dockerfile
       tags:
         - infra7/python:${PYTHON_SERIES}-${TARGET_OS}
         - infra7/python:${PYTHON_VERSION}-${TARGET_OS}
-    environment:
-      - PYTHON_VERSION=${PYTHON_VERSION}
     image: infra7/python:${PYTHON_VERSION}-${TARGET_OS}
     network_mode: host

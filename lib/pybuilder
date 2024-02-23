@@ -80,7 +80,7 @@ function __make() {
     make -j "$(nproc)" \
     "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
     "LDFLAGS=${LDFLAGS:-}" \
-    "PROFILE_TASK=${PROFILE_TASK:-}" \
+    "PROFILE_TASK=${PROFILE_TASK:-'-V'}" \
 
     # https://github.com/docker-library/python/issues/784
     # prevent accidental usage of a system installed libpython of the same version
@@ -89,7 +89,7 @@ function __make() {
     make -j "$(nproc)" \
     "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
     "LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
-    "PROFILE_TASK=${PROFILE_TASK:-}" \
+    "PROFILE_TASK=${PROFILE_TASK:-'-V'}" \
     python
 }
 
@@ -122,6 +122,7 @@ function __make_install() {
 
     # method ___cleanup: Cleanup unwanted files
     ___cleanup() {
+        cd /
         find ${PREFIX} -depth -type d \
             -a \( -name 'test'  -o -name 'tests' -o -name 'idle_test' \) \
             -exec rm -rf '{}' +
@@ -156,7 +157,6 @@ function __make_install() {
     #___test python "${PYTHON_VERSION}"
 
     ___install_core_modules
-
     ___cleanup
 }
 

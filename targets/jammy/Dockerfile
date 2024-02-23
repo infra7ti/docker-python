@@ -1,5 +1,5 @@
 ARG DISTRO=ubuntu
-ARG TARGET_OS=noble
+ARG TARGET_OS=jammy
 ARG TARGET_VARIANT
 FROM ${DISTRO}:${TARGET_OS}${TARGET_VARIANT}
 
@@ -15,13 +15,13 @@ ENV PATH /usr/local/bin:$PATH
 ENV LANG C.UTF-8
 
 ARG PYTHON_SERIES
-ARG TARGET_OS=noble
+ARG TARGET_OS=jammy
 COPY ${TARGET_OS}/pyenv.${PYTHON_SERIES:-3.12} /usr/src/python/pyenv
-COPY libhelper/* /usr/src/python/
+COPY lib/* /usr/src/python/
 
 RUN set -eu; \
     source /usr/src/python/pyenv; \
-    source /usr/src/python/pybuildhelper; \
+    source /usr/src/python/pybuilder; \
     \
     apt-get update; \
     apt-get dist-upgrade -y --autoremove; \
