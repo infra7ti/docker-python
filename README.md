@@ -7,40 +7,57 @@
 
 ### Supported Tags
 
-#### Simple Tags
+Below you can view a summary of supported series and distribution codenames
+with the current release built for each one.
 
-* Debian 12 (Book Worm):
-    - 3.12.0-bookworm, 3.12-bookworm
-    - 3.11.6-bookworm, 3.11-bookworm
-    - 3.10.13-bookworm, 3.10-bookworm
-    - 3.9.18-bookworm, 3.9-bookworm
-    - 3.8.18-bookworm, 3.8-bookworm
-    - 2.7.18-bookworm¹, 2.7-bookworm¹
+The tags can be derivated for the table in the following formats:
 
-* Ubuntu 22.04 LTS (Jammy Jellyfish):
-    - 3.12.0-jammy, 3.12-jammy
-    - 3.11.6-jammy, 3.11-jammy
-    - 3.10.13-jammy, 3.10-jammy
-    - 3.9.18-jammy, 3.9-jammy
-    - 3.8.18-jammy, 3.8-jammy
-    - 2.7.18-jammy¹, 2.7-jammy¹
+#### 1. Simple tags
+The tags are unique for a composition of serie/distro or version/distro:
 
-#### Shared Tags
+* _serie-distro_:
+  
+    * 3.12 → ``3.12-bookworm`` ``3.12-jammy``
+    * 3.11 → ``3.11-bookworm`` ``3.11-jammy``
+    * 3.10 → ``3.10-bookworm`` ``3.10-jammy``
+    * 3.9 → ``3.9-bookworm`` ``3.9-jammy``
+    * 3.8 → ``3.8-bookworm`` ``3.8-jammy`` 
+    * 2.7¹ → ``2.7-bookworm`` ``2.7-jammy`` ``2.7-noble``
+  
+* _version_distro_:
+    *  3.12.1 → ``3.12.1-bookworm`` ``3.12.1-jammy`` ``3.12.0-bookworm`` ``3.12.0-jammy``
+    *  3.11.7 →  ``3.11.7-bookworm`` ``3.11.7-jammy`` ``3.11.6-bookworm`` ``3.11.6-jammy``
+    *  3.10.13 → ``3.10.13-bookworm`` ``3.10.13-jammy``
+    *  3.9.18 → ``3.9.18-bookworm`` ``3.9.18-jammy``
+    *  3.8.18 → ``3.8.18-bookworm`` ``3.8.18-jammy`` 
+    *  2.7.18¹ → ``2.7.18-bookworm`` ``2.7.18-jammy`` ``2.7.18-noble``
 
-* 3.12.0, 3.12, 3, latest: 3.12.0-bookworm
-* 3.11.6, 3.11: 3.11.6-bookworm
-* 3.10.13, 3.10: 3.10.13-bookworm
-* 3.9.18, 3.9: 3.9.18-bookworm
-* 3.8.18, 3.8: 3.8.18-bookworm
-* 2.7.18¹, 2.7¹: 2.7.18-bookworm¹
+#### 2. Shared tags
+The tags are shared between the distros (default distro currently is bookworm):
 
+* _serie_  → ``3.12`` ``3.11`` ``3.10`` ``3.9`` ``3.8`` ``2.7``
+* _version_  → ``3.12.1`` ``3.11.7`` ``3.10.13`` ``3.9.18`` ``3.8.18`` ``2.7.18``
+* _latest_  → ``latest``
 
+### Build Status
+
+The table below shows the build status for the latest release for each python series on each of supported distributions:
+
+|       Python Serie → | 3.12    | 3.11    | 3.10    | 3.9     | 3.8     | 2.7¹    |
+|----------------------|---------|---------|---------|---------|---------|---------|
+| Distro ↓ / Version → | 3.12.2  | 3.11.8  | 3.10.13 | 3.9.18  | 3.8.18  | 2.7.18  |
+| Debian (bookworm)    |         |         | &check; | &check; | &check; | &check; |
+| Debian (trixie)      |         |         |         |         |         |         |
+| Ubuntu (jammy)       | &check; | &check; | &check; | &check; | &check; | &check; |
+| Ubuntu (noble)       |         |         |         |         |         | &check; |
+
+>[!Note]
 > ¹ Python 2.7 is EOL. We built it only to support legacy projects migrating to newer versions. Please, be carefull when using this image - it's unsecure.
 
 ### Supported architetures
 
-* 64-bit x86 (AMD/Intel): amd64, x86_64, x86
-* 64-bit ARM: arm64, arm64v8, aarch64
+* ``amd64`` → 64-bit x86 (AMD/Intel): amd64, x86_64, x86
+* ``arm64`` → 64-bit ARM: arm64, arm64v8, aarch64
 
 ---
 
