@@ -1,5 +1,5 @@
 ARG DISTRO=ubuntu
-ARG TARGET_OS=jammy
+ARG TARGET_OS=focal
 ARG TARGET_VARIANT
 FROM ${DISTRO}:${TARGET_OS}${TARGET_VARIANT}
 
@@ -15,8 +15,8 @@ ENV PATH /usr/local/bin:$PATH
 ENV LANG C.UTF-8
 
 ARG PYTHON_SERIES
-ARG TARGET_OS=jammy
-COPY targets/${TARGET_OS}/pyenv.${PYTHON_SERIES:-3.12} /usr/src/python/pyenv
+ARG TARGET_OS=focal
+COPY ${TARGET_OS}/pyenv.${PYTHON_SERIES:-3.12} /usr/src/python/pyenv
 COPY lib/* /usr/src/python/
 
 RUN set -eu; \

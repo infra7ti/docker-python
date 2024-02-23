@@ -16,7 +16,7 @@ ENV LANG C.UTF-8
 
 ARG PYTHON_SERIES
 ARG TARGET_OS=trixie
-COPY ${TARGET_OS}/pyenv.${PYTHON_SERIES:-3.12} /usr/src/python/pyenv
+COPY targets/${TARGET_OS}/pyenv.${PYTHON_SERIES:-3.12} /usr/src/python/pyenv
 COPY lib/* /usr/src/python/
 
 RUN set -eu; \
