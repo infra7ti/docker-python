@@ -2,19 +2,23 @@
 SHELL := /bin/bash
 
 repo := local
-target := bookworm
+targets := targets/bookworm
 versions := $(wildcard versions/*.env)
 
-all: target/${target}
 .PHONY: all
+all:
 
-target/%:
+$(targets): targets/%: %
+	@true
+
+%:
 	@tgt=$@; for file in $(versions); do \
 	    ver=$${file%.*}; \
 	    source $${file}; \
 	    docker buildx build . \
 	        --file targets/$${tgt}/Dockerfile \
-		--build-arg PYTHON_VERSION=$${ver} \
+		--build-arg PYTHON_VERSION=$${ver##*/} \
 		--tag $(repo)/python:$${PYTHON_RELEASE}-$${tgt} \
+		--load \
 	    || exit $${?}; \
 	done
