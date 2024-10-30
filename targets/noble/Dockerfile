@@ -1,7 +1,7 @@
 ARG DISTRO=ubuntu
-ARG TARGET_OS=noble
+ARG TARGET=noble
 ARG TARGET_VARIANT
-FROM ${DISTRO}:${TARGET_OS}${TARGET_VARIANT}
+FROM ${DISTRO}:${TARGET}${TARGET_VARIANT}
 
 # Needed for source shell functions into this Dockerfile
 SHELL ["/bin/bash", "-c"]
@@ -14,13 +14,15 @@ ENV PATH /usr/local/bin:$PATH
 # *fundamentally breaks Python 3*, and that's not OK.
 ENV LANG C.UTF-8
 
-ARG PYTHON_SERIES
-ARG TARGET_OS=noble
-COPY targets/${TARGET_OS}/pyenv.${PYTHON_SERIES:-3.12} /usr/src/python/pyenv
+ARG PYTHON_VERSION
+ARG TARGET=noble
+COPY versions/${PYTHON_VERSION}.env /usr/src/python/version.env
+COPY targets/${TARGET}/pybuilder.env /usr/src/python/pybuilder.env
 COPY lib/* /usr/src/python/
 
 RUN set -eu; \
-    source /usr/src/python/pyenv; \
+    source /usr/src/python/version.env; \
+    source /usr/src/python/pybuilder.env; \
     source /usr/src/python/pybuilder; \
     \
     apt-get update; \
@@ -39,7 +41,7 @@ RUN set -eu; \
             --no-install-suggests \
     ; \
     # -- get the Python source code ------------------------------------------ \
-    __get_source "${PYTHON_VERSION}" \
+    __get_source "${PYTHON_RELEASE}" \
     ; \
     # -- configure the source for building ----------------------------------- \
     gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
@@ -52,7 +54,7 @@ RUN set -eu; \
         --with-system-expat \
         --without-ensurepip \
         ${PYTHON_EXTRA_BUILD_OPTS} \
-        $([ ${PYTHON_SERIES//.*/} -gt 2 ] && \
+        $([ ${PYTHON_VERSION//.*/} -gt 2 ] && \
             echo "--enable-loadable-sqlite-extensions") \
     ; \
     # -- build python from source -------------------------------------------- \

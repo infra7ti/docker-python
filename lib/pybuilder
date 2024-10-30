@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export PYTHON_VERSION
+export PYTHON_RELEASE
 export PYTHON_PIP_VERSION
 export PYTHON_SETUPTOOLS_VERSION
 export PYTHON_GET_PIP_URL
@@ -14,11 +14,11 @@ export PYTHON_EXTRA_BUILD_OPTS
 #       returns: none
 #   ----------------------------------------------------------------------------
 function __get_source() {
-    DLBASEURL="https://python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}" \
+    DLBASEURL="https://python.org/ftp/python/${PYTHON_RELEASE%%[a-z]*}" \
     KEYSERVER="keyserver.ubuntu.com"
-    SOURCE="Python-${1-${PYTHON_VERSION}}.tar.xz"
+    SOURCE="Python-${1-${PYTHON_RELEASE}}.tar.xz"
 
-    printf $"Downloading source for Python=%s...\n\n" ${PYTHON_VERSION}
+    printf $"Downloading source for Python=%s...\n\n" ${PYTHON_RELEASE}
     wget --show-progress -qO "${SOURCE}" "${DLBASEURL}/${SOURCE}"
     wget --show-progress -qO "${SOURCE}.asc" "${DLBASEURL}/${SOURCE}.asc"
     echo
@@ -66,8 +66,8 @@ function __configure() {
         --extract \
         --directory /usr/src/python \
         --strip-components=1 \
-        --file "python-${PYTHON_VERSION}.tar.xz" && \
-    rm -f "python-${PYTHON_VERSION}.tar.xz"
+        --file "python-${PYTHON_RELEASE}.tar.xz" && \
+    rm -f "python-${PYTHON_RELEASE}.tar.xz"
 
     ___configure "${@}"
 }
@@ -108,8 +108,8 @@ function __make_install() {
             || return 2
 
         export PYTHONDONTWRITEBYTECODE=1
-        PYMAJOR="${PYTHON_VERSION//.*/}"
-        python${PYMAJOR} get-pip.py \
+        PYTHON_BIN_SUFFIX="${PYTHON_RELEASE//.*/}"
+        python${PYTHON_BIN_SUFFIX} get-pip.py \
             --disable-pip-version-check \
             --no-cache-dir \
             --no-compile \
@@ -144,17 +144,17 @@ function __make_install() {
 
     # make some useful symlinks that are expected to exists
     # ("${PREFIX}/bin/python" and friends)
-    PYMAJOR="${PYTHON_VERSION//.*/}"
+    PYTHON_BIN_SUFFIX="${PYTHON_RELEASE//.*/}"
     for src in \
-            idle${PYMAJOR} pydoc${PYMAJOR} \
-            python${PYMAJOR} python${PYMAJOR}-config; do
-        dst="$(echo "$src" | tr -d ${PYMAJOR})";
+            idle${PYTHON_BIN_SUFFIX} pydoc${PYTHON_BIN_SUFFIX} \
+            python${PYTHON_BIN_SUFFIX} python${PYTHON_BIN_SUFFIX}-config; do
+        dst="$(echo "$src" | tr -d ${PYTHON_BIN_SUFFIX})";
         if [ -s "${PREFIX}/bin/$src" ] && [ ! -e "${PREFIX}/bin/$dst" ]; then
             ln -svT "$src" "${PREFIX}/bin/$dst"
         fi
     done
 
-    #___test python "${PYTHON_VERSION}"
+    #___test python "${PYTHON_RELEASE}"
 
     ___install_core_modules
     ___cleanup
