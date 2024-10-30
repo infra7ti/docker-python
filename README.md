@@ -13,46 +13,32 @@ with the current release built for each one.
 The tags can be derivated for the table in the following formats:
 
 #### 1. Simple tags
-The tags are unique for a composition of serie/distro or version/distro:
+The tags are unique for a composition of version/target or release/target:
 
-* _serie-distro_:
+* version/target → ```infra7/python:<version>-<target>``` (eg. infra7/python:3.13-bookworm)
+* release/target → ```infra7/python:<release>-<target>``` (eg. infra7/python:3.13.0-bookworm)
   
-    * 3.12 → ``3.12-bookworm`` ``3.12-jammy``
-    * 3.11 → ``3.11-bookworm`` ``3.11-jammy``
-    * 3.10 → ``3.10-bookworm`` ``3.10-jammy``
-    * 3.9 → ``3.9-bookworm`` ``3.9-jammy``
-    * 3.8 → ``3.8-bookworm`` ``3.8-jammy`` 
-    * 2.7¹ → ``2.7-bookworm`` ``2.7-jammy`` ``2.7-noble``
-  
-* _version_distro_:
-    *  3.12.1 → ``3.12.1-bookworm`` ``3.12.1-jammy`` ``3.12.0-bookworm`` ``3.12.0-jammy``
-    *  3.11.7 →  ``3.11.7-bookworm`` ``3.11.7-jammy`` ``3.11.6-bookworm`` ``3.11.6-jammy``
-    *  3.10.13 → ``3.10.13-bookworm`` ``3.10.13-jammy``
-    *  3.9.18 → ``3.9.18-bookworm`` ``3.9.18-jammy``
-    *  3.8.18 → ``3.8.18-bookworm`` ``3.8.18-jammy`` 
-    *  2.7.18¹ → ``2.7.18-bookworm`` ``2.7.18-jammy`` ``2.7.18-noble``
-
 #### 2. Shared tags
-The tags are shared between the distros (default distro currently is bookworm):
+The tags are related to default target (currently 'bookworm'):
 
-* _serie_  → ``3.12`` ``3.11`` ``3.10`` ``3.9`` ``3.8`` ``2.7``
-* _version_  → ``3.12.1`` ``3.11.7`` ``3.10.13`` ``3.9.18`` ``3.8.18`` ``2.7.18``
-* _latest_  → ``latest``
+* version → ```infra7/python:<version>``` (eg. infra7/python:3.13)
+* release → ```infra7/python:<release>``` (eg. infra7/python:3.13.0)
+* latest → ```infra7/python:latest``` (eg. infra7/python:latest)
 
 ### Build Status
 
-The table below shows the build status for the latest release for each python series on each of supported distributions:
+The table below shows the build status for the latest release for each python version on each of supported target:
 
-|       Python Serie → | 3.12    | 3.11    | 3.10    | 3.9     | 3.8     | 2.7¹    |
-|----------------------|---------|---------|---------|---------|---------|---------|
-| Distro ↓ / Version → | 3.12.2  | 3.11.8  | 3.10.13 | 3.9.18  | 3.8.18  | 2.7.18  |
-| Debian (bookworm)    |         |         | &check; | &check; | &check; | &check; |
-| Debian (trixie)      |         |         |         |         |         |         |
-| Ubuntu (jammy)       | &check; | &check; | &check; | &check; | &check; | &check; |
-| Ubuntu (noble)       |         |         |         |         |         | &check; |
+|     Python Version → | 3.13    | 3.12    | 3.11    | 3.10    | 3.9     | 
+|----------------------|---------|---------|---------|---------|---------|
+| Target ↓ / Release → | 3.13.0  | 3.12.7  | 3.11.10 | 3.10.15 | 3.9.20  |
+| Debian (trixie)¹     |         |         |         |         |         |
+| Debian (bookworm)    | &check; | &check; | &check; | &check; | &check; |
+| Ubuntu (jammy)       |         |         |         |         |         |
+| Ubuntu (noble)       |         |         |         |         |         |
 
->[!Note]
-> ¹ Python 2.7 is EOL. We built it only to support legacy projects migrating to newer versions. Please, be carefull when using this image - it's unsecure.
+>[!Caution]
+> ¹ Debian 12 (Trixie) is unstable version. Please do not use it on production deployments.
 
 ### Supported architetures
 
@@ -94,7 +80,7 @@ _musl libc_ leads to major problems for a large number of projects.
 ### Create a ```Dockerfile``` for your Python project
 
 ```Dockerfile
-FROM infra7/python:3.11
+FROM infra7/python:3.13
 
 COPY requirements.txt /usr/src/app/
 
@@ -110,8 +96,8 @@ CMD ["python", "./app.py"]
 Now, you can build and run your Docker image:
 
 ```bash
-$ docker buildx build -t my-app .
-$ docker run --rm -it -name my-app my-app
+$ docker buildx build -t local/my-app .
+$ docker run --rm -it -name my-app local/my-app
 ```
 
 ### Run a single Python script
@@ -121,7 +107,7 @@ full Dockerfile. In such cases, you can run a Python script using the Python
 Docker image directly:
 
 ```bash
-$ docker run --rm -it --name my-script -v "${PWD}":/usr/src/myapp -w /usr/src/myapp python:3 python my-script.py
+$ docker run --rm -it --name my-script -v "${PWD}":/usr/src/myapp -w /usr/src/myapp local/myapp python my-script.py
 ```
 
 ## Image Variants
